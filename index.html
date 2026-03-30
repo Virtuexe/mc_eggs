@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft Egg Painter</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="header neon-glow">
+            <h1>Egg Texture Editor</h1>
+            <p>Customize your 16x16 spawn eggs for Minecraft</p>
+        </header>
+        
+        <main class="workspace">
+            <aside class="toolbar glass-panel">
+                <h2>Tools</h2>
+                <div class="tool-group">
+                    <label>Colors</label>
+                    <input type="color" id="colorPicker" value="#ff5555" title="Choose drawing color">
+                </div>
+                
+                <div class="tool-group">
+                    <label>Modes</label>
+                    <button id="btnPencil" class="tool-btn active">✏️ Pencil</button>
+                    <button id="btnEraser" class="tool-btn">🧽 Eraser</button>
+                </div>
+
+                <div class="tool-group">
+                    <label>Actions</label>
+                    <button id="btnClear" class="action-btn clear-btn">🗑️ Clear Canvas</button>
+                    <button id="btnDownload" class="action-btn download-btn">💾 Download File</button>
+                    
+                    <div class="file-upload-wrapper">
+                        <label for="imgLoader" class="action-btn upload-btn">📁 Load Image</label>
+                        <input type="file" id="imgLoader" accept="image/png, image/jpeg" style="display: none;">
+                    </div>
+                </div>
+                <div class="instructions">
+                    <p>Load your 16x16 egg texture, then click and drag on the grid to paint over it!</p>
+                </div>
+            </aside>
+            
+            <section class="canvas-area">
+                <div class="canvas-wrapper">
+                    <canvas id="eggCanvas" width="16" height="16"></canvas>
+                    <div class="grid-overlay hidden" id="gridOverlay"></div>
+                </div>
+                <div class="canvas-controls">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="toggleGrid" checked>
+                        <span class="slider"></span>
+                        <span class="label-text">Show Grid</span>
+                    </label>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
