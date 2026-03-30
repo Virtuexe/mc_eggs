@@ -62,47 +62,23 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.clearRect(0, 0, SIZE, SIZE);
     }
     
-    // Hardcoded Egg Bases for 16x16
-    // 0 = transparent, 1 = outline (#4A4A4A), 2 = body (#C5C5C5)
-    const EGG_BASE_PIXELS = [
-        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0],
-        [0,0,0,0,1,1,2,2,2,2,1,1,0,0,0,0],
-        [0,0,0,1,2,2,2,2,2,2,2,2,1,0,0,0],
-        [0,0,1,2,2,2,2,2,2,2,2,2,2,1,0,0],
-        [0,0,1,2,2,2,2,2,2,2,2,2,2,1,0,0],
-        [0,1,2,2,2,2,2,2,2,2,2,2,2,2,1,0],
-        [0,1,2,2,2,2,2,2,2,2,2,2,2,2,1,0],
-        [0,1,2,2,2,2,2,2,2,2,2,2,2,2,1,0],
-        [0,1,2,2,2,2,2,2,2,2,2,2,2,2,1,0],
-        [0,0,1,2,2,2,2,2,2,2,2,2,2,1,0,0],
-        [0,0,1,2,2,2,2,2,2,2,2,2,2,1,0,0],
-        [0,0,0,1,2,2,2,2,2,2,2,2,1,0,0,0],
-        [0,0,0,0,1,1,2,2,2,2,1,1,0,0,0,0],
-        [0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    ];
-
-    function drawBaseEgg(type) {
+    function loadEggImage(url) {
         clearCanvas();
-        if (type === 'none') return;
+        if (url === 'none') return;
         
-        for(let y = 0; y < SIZE; y++) {
-            for(let x = 0; x < SIZE; x++) {
-                const p = EGG_BASE_PIXELS[y][x];
-                if (p === 1) { // Outline
-                    ctx.fillStyle = type === 'overlay_egg' ? '#222222' : '#4A4A4A';
-                    ctx.fillRect(x, y, 1, 1);
-                } else if (p === 2 && type === 'base_egg') { // Body (only base egg)
-                    ctx.fillStyle = '#C5C5C5';
-                    ctx.fillRect(x, y, 1, 1);
-                }
-            }
-        }
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => {
+             ctx.drawImage(img, 0, 0, SIZE, SIZE);
+        };
+        img.onerror = () => {
+            console.error("Failed to load preset egg:", url);
+        };
+        img.src = url;
     }
 
     eggSwap.addEventListener('change', (e) => {
-        drawBaseEgg(e.target.value);
+        loadEggImage(e.target.value);
     });
 
     // Tools Switching
