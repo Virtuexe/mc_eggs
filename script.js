@@ -112,12 +112,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const y = Math.floor((clientY - rect.top) * scaleY);
         return { x, y };
     }
+    let drawnPixels = new Set();
 
     function drawPixel(e) {
         if (!isDrawing) return;
         const { x, y } = getMousePos(e);
         
         if (x < 0 || x >= SIZE || y < 0 || y >= SIZE) return;
+
+        // Prevent drawing over the exact same pixel twice in one stroke
+        const pixelKey = `${x},${y}`;
+        if (drawnPixels.has(pixelKey)) return;
+        drawnPixels.add(pixelKey);
 
         if (currentMode === 'pencil') {
             const color = hexToRgba(colorPicker.value, alphaSlider.value);
@@ -146,6 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Mouse/Touch Events
     wrapper.addEventListener('mousedown', (e) => {
         isDrawing = true;
+        drawnPixels.clear(); // new stroke
         drawPixel(e);
     });
     wrapper.addEventListener('mousemove', drawPixel);
@@ -154,6 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
     wrapper.addEventListener('touchstart', (e) => {
         e.preventDefault();
         isDrawing = true;
+        drawnPixels.clear(); // new stroke
         drawPixel(e);
     }, {passive: false});
     wrapper.addEventListener('touchmove', (e) => {
