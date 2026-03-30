@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const alphaValue = document.getElementById('alphaValue');
     const quickColors = document.getElementById('quickColors');
     const eggSwap = document.getElementById('eggSwap');
+    const blendMode = document.getElementById('blendMode');
     
     const btnPencil = document.getElementById('btnPencil');
     const btnEraser = document.getElementById('btnEraser');
@@ -119,12 +120,26 @@ document.addEventListener('DOMContentLoaded', () => {
         if (x < 0 || x >= SIZE || y < 0 || y >= SIZE) return;
 
         if (currentMode === 'pencil') {
-            // Clear pixel first so transparency overwrites fully rather than blending
-            ctx.clearRect(x, y, 1, 1); 
-            ctx.fillStyle = hexToRgba(colorPicker.value, alphaSlider.value);
-            ctx.fillRect(x, y, 1, 1);
+            const color = hexToRgba(colorPicker.value, alphaSlider.value);
+            const mode = blendMode.value;
+
+            if (mode === 'source-over') {
+                // In normal mode, clear the pixel first so transparency is clean
+                ctx.clearRect(x, y, 1, 1);
+                ctx.globalCompositeOperation = 'source-over';
+                ctx.fillStyle = color;
+                ctx.fillRect(x, y, 1, 1);
+            } else {
+                // In blend modes, we draw OVER the existing egg pixels
+                ctx.globalCompositeOperation = mode;
+                ctx.fillStyle = color;
+                ctx.fillRect(x, y, 1, 1);
+            }
         } else if (currentMode === 'eraser') {
-            ctx.clearRect(x, y, 1, 1);
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.fillRect(x, y, 1, 1);
+            // Reset to normal after erase
+            ctx.globalCompositeOperation = 'source-over';
         }
     }
 

@@ -54,6 +54,18 @@
                 </div>
                 
                 <div class="tool-group">
+                    <label>Brush Settings</label>
+                    <div class="mc-select-wrapper">
+                        <select id="blendMode" class="mc-select">
+                            <option value="source-over">Normal (Overwrite)</option>
+                            <option value="multiply">Multiply (Keep Shadows)</option>
+                            <option value="overlay">Overlay (Vibrant Shading)</option>
+                            <option value="screen">Screen (Lighten Only)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="tool-group">
                     <label>Tools</label>
                     <div style="display: flex; gap: 10px;">
                         <button id="btnPencil" class="mc-btn active" style="flex:1;">Pencil</button>
