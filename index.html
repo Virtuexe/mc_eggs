@@ -3,60 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minecraft Egg Painter</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <title>Minecraft Egg Creator</title>
+    <!-- Use a pixel art font -->
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="app-container">
-        <header class="header neon-glow">
-            <h1>Egg Texture Editor</h1>
-            <p>Customize your 16x16 spawn eggs for Minecraft</p>
-        </header>
+    <div class="mc-container">
         
+        <header class="header mc-panel">
+            <h1>Egg Texture Editor</h1>
+            <p>Customize your 16x16 spawn eggs for Minecraft!</p>
+        </header>
+
         <main class="workspace">
-            <aside class="toolbar glass-panel">
-                <h2>Tools</h2>
+            <aside class="toolbar mc-panel">
+                <h2>Inventory Tools</h2>
+                
                 <div class="tool-group">
-                    <label>Colors</label>
-                    <input type="color" id="colorPicker" value="#ff5555" title="Choose drawing color">
+                    <label>Base Texture</label>
+                    <div class="mc-select-wrapper">
+                        <select id="eggSwap" class="mc-select">
+                            <option value="none">Empty Canvas</option>
+                            <option value="base_egg">Classic Egg Shape</option>
+                            <option value="overlay_egg">Egg Outline Only</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="tool-group">
+                    <label>Active Color</label>
+                    <div class="color-controls">
+                        <input type="color" id="colorPicker" value="#B02E26" title="Choose color">
+                        <div class="alpha-control">
+                            <label>Alpha/Opacity</label>
+                            <div style="display:flex; align-items:center; gap: 5px;">
+                                <input type="range" id="alphaSlider" min="0" max="1" step="0.05" value="1">
+                                <span id="alphaValue">100%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tool-group">
+                    <label>Minecraft Dyes Panel</label>
+                    <div class="palette" id="quickColors">
+                        <!-- Swatches injected via JS -->
+                    </div>
                 </div>
                 
                 <div class="tool-group">
-                    <label>Modes</label>
-                    <button id="btnPencil" class="tool-btn active">✏️ Pencil</button>
-                    <button id="btnEraser" class="tool-btn">🧽 Eraser</button>
+                    <label>Tools</label>
+                    <div style="display: flex; gap: 10px;">
+                        <button id="btnPencil" class="mc-btn active" style="flex:1;">Pencil</button>
+                        <button id="btnEraser" class="mc-btn" style="flex:1;">Eraser</button>
+                    </div>
                 </div>
 
                 <div class="tool-group">
                     <label>Actions</label>
-                    <button id="btnClear" class="action-btn clear-btn">🗑️ Clear Canvas</button>
-                    <button id="btnDownload" class="action-btn download-btn">💾 Download File</button>
+                    <button id="btnClear" class="mc-btn danger-btn">Clear Canvas</button>
+                    <button id="btnDownload" class="mc-btn success-btn">Download PNG</button>
                     
                     <div class="file-upload-wrapper">
-                        <label for="imgLoader" class="action-btn upload-btn">📁 Load Image</label>
-                        <input type="file" id="imgLoader" accept="image/png, image/jpeg" style="display: none;">
+                        <label for="imgLoader" class="mc-btn">Load Custom PNG...</label>
+                        <input type="file" id="imgLoader" accept="image/png" style="display: none;">
                     </div>
-                </div>
-                <div class="instructions">
-                    <p>Load your 16x16 egg texture, then click and drag on the grid to paint over it!</p>
                 </div>
             </aside>
             
-            <section class="canvas-area">
+            <section class="canvas-area mc-panel">
                 <div class="canvas-wrapper">
+                    <!-- Minecraft checkerboard canvas bg -->
+                    <div class="transparent-bg"></div>
                     <canvas id="eggCanvas" width="16" height="16"></canvas>
                     <div class="grid-overlay hidden" id="gridOverlay"></div>
                 </div>
+                
                 <div class="canvas-controls">
-                    <label class="toggle-switch">
+                    <label class="mc-checkbox">
                         <input type="checkbox" id="toggleGrid" checked>
-                        <span class="slider"></span>
-                        <span class="label-text">Show Grid</span>
+                        <span class="checkmark"></span>
+                        Show Pixel Grid
                     </label>
                 </div>
             </section>
         </main>
+
     </div>
     <script src="script.js"></script>
 </body>
