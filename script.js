@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnEraser = document.getElementById('btnEraser');
     const btnClear = document.getElementById('btnClear');
     const btnDownload = document.getElementById('btnDownload');
+    const btnShare = document.getElementById('btnShare');
     const toggleGrid = document.getElementById('toggleGrid');
     const gridOverlay = document.getElementById('gridOverlay');
     const imgLoader = document.getElementById('imgLoader');
@@ -185,6 +186,45 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target.checked) gridOverlay.classList.remove('hidden');
         else gridOverlay.classList.add('hidden');
     });
+
+    // Share Link Logic (URL Encoding)
+    if(btnShare) {
+        btnShare.addEventListener('click', () => {
+            // Convert canvas to a small data URL string
+            const dataURL = canvas.toDataURL('image/png');
+            // We use a hash to store data without reloading the page
+            window.location.hash = "share=" + encodeURIComponent(dataURL);
+            
+            // Copy link to clipboard
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                const originalText = btnShare.innerText;
+                btnShare.innerText = "✅ Link Copied!";
+                
+                setTimeout(() => {
+                    btnShare.innerText = originalText;
+                }, 2000);
+            });
+        });
+    }
+
+    // Check for shared data on load
+    function loadFromURL() {
+        if (window.location.hash && window.location.hash.startsWith("#share=")) {
+            const dataURL = decodeURIComponent(window.location.hash.substring(7));
+            const img = new Image();
+            img.crossOrigin = "anonymous";
+            img.onload = () => {
+                ctx.clearRect(0, 0, SIZE, SIZE);
+                ctx.drawImage(img, 0, 0, SIZE, SIZE);
+                // Also update the hidden 'original' canvas so they can paint over shared eggs
+                originalCtx.clearRect(0, 0, SIZE, SIZE);
+                originalCtx.drawImage(img, 0, 0, SIZE, SIZE);
+            };
+            img.src = dataURL;
+        }
+    }
+
+    loadFromURL();
 
     // Image Upload
     imgLoader.addEventListener('change', (e) => {
