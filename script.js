@@ -63,14 +63,25 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.clearRect(0, 0, SIZE, SIZE);
     }
     
+    let drawnPixels = new Set();
+    
+    // Store the original state of the loaded egg image 
+    // to refer back to it during blending and erasing
+    const originalCanvas = document.createElement('canvas');
+    originalCanvas.width = SIZE;
+    originalCanvas.height = SIZE;
+    const originalCtx = originalCanvas.getContext('2d');
+
     function loadEggImage(url) {
         clearCanvas();
+        originalCtx.clearRect(0, 0, SIZE, SIZE);
         if (url === 'none') return;
         
         const img = new Image();
         img.crossOrigin = "anonymous";
         img.onload = () => {
              ctx.drawImage(img, 0, 0, SIZE, SIZE);
+             originalCtx.drawImage(img, 0, 0, SIZE, SIZE);
         };
         img.onerror = () => {
             console.error("Failed to load preset egg:", url);
@@ -112,7 +123,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const y = Math.floor((clientY - rect.top) * scaleY);
         return { x, y };
     }
-    let drawnPixels = new Set();
 
     function drawPixel(e) {
         if (!isDrawing) return;
@@ -125,27 +135,22 @@ document.addEventListener('DOMContentLoaded', () => {
         if (drawnPixels.has(pixelKey)) return;
         drawnPixels.add(pixelKey);
 
+        // Before any drawing or erasing action, restore the pure original pixel from base storage
+        ctx.clearRect(x, y, 1, 1);
+        ctx.drawImage(originalCanvas, x, y, 1, 1, x, y, 1, 1);
+
         if (currentMode === 'pencil') {
             const color = hexToRgba(colorPicker.value, alphaSlider.value);
             const mode = blendMode.value;
 
-            if (mode === 'source-over') {
-                // In normal mode, clear the pixel first so transparency is clean
-                ctx.clearRect(x, y, 1, 1);
-                ctx.globalCompositeOperation = 'source-over';
-                ctx.fillStyle = color;
-                ctx.fillRect(x, y, 1, 1);
-            } else {
-                // In blend modes, we draw OVER the existing egg pixels
-                ctx.globalCompositeOperation = mode;
-                ctx.fillStyle = color;
-                ctx.fillRect(x, y, 1, 1);
-            }
-        } else if (currentMode === 'eraser') {
-            ctx.globalCompositeOperation = 'destination-out';
+            ctx.globalCompositeOperation = mode;
+            ctx.fillStyle = color;
             ctx.fillRect(x, y, 1, 1);
-            // Reset to normal after erase
-            ctx.globalCompositeOperation = 'source-over';
+            ctx.globalCompositeOperation = 'source-over'; // reset
+        } else if (currentMode === 'eraser') {
+            // Already cleared and restored original, nothing extra to do.
+            // If they want the eraser to wipe to pure transparency (not original egg), lengthly logic needed.
+            // However, resetting to the original pixel is what an eraser should do when coloring eggs.
         }
     }
 
