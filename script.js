@@ -252,4 +252,65 @@ document.addEventListener('DOMContentLoaded', () => {
         link.href = dataURL;
         link.click();
     });
+
+    // --- Advancement Generator Logic ---
+    const advTrigger = document.getElementById('advTrigger');
+    const advConditionLabel = document.getElementById('advConditionLabel');
+    const advCondition = document.getElementById('advCondition');
+    const advReward = document.getElementById('advReward');
+    const btnGenerateAdv = document.getElementById('btnGenerateAdv');
+    const advOutput = document.getElementById('advOutput');
+
+    if(advTrigger) {
+        // Change label based on selected trigger
+        advTrigger.addEventListener('change', () => {
+            const val = advTrigger.value;
+            if (val === 'consume_item') {
+                advConditionLabel.innerText = "Target Item ID";
+                advCondition.value = "minecraft:apple";
+            } else if (val === 'location') {
+                advConditionLabel.innerText = "Target Biome ID";
+                advCondition.value = "minecraft:plains";
+            } else if (val === 'kill_entity') {
+                advConditionLabel.innerText = "Target Entity ID";
+                advCondition.value = "minecraft:zombie";
+            }
+        });
+
+        btnGenerateAdv.addEventListener('click', () => {
+            const trigger = advTrigger.value;
+            const targetId = advCondition.value.trim();
+            const rewardFunc = advReward.value.trim();
+
+            let conditions = {};
+
+            if (trigger === 'consume_item') {
+                conditions = {
+                    item: { items: targetId }
+                };
+            } else if (trigger === 'location') {
+                conditions = {
+                    player: { location: { biomes: targetId } }
+                };
+            } else if (trigger === 'kill_entity') {
+                conditions = {
+                    entity: { type: targetId }
+                };
+            }
+
+            const advObj = {
+                criteria: {
+                    requirement: {
+                        trigger: `minecraft:${trigger}`,
+                        conditions: conditions
+                    }
+                },
+                rewards: {
+                    function: rewardFunc
+                }
+            };
+
+            advOutput.value = JSON.stringify(advObj, null, 2);
+        });
+    }
 });
